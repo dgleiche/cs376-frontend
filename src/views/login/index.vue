@@ -90,7 +90,6 @@ export default {
   },
   methods: {
     handleLogin() {
-      this.loading = true
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase
         .auth()
@@ -98,10 +97,8 @@ export default {
         .then(async (result) => {
           await this.$store.dispatch('user/setInfo', result.user)
           await this.$router.push({ path: this.redirect || '/' })
-          this.loading = false
         })
         .catch((error) => {
-          this.loading = false
           console.error('Error signing in with firebase')
           console.error(`[${error.code}]: ${error.message}`)
         })
