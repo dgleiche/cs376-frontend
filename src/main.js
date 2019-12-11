@@ -14,11 +14,15 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
 import '@/icons' // icon
 import '@/permission' // permission control
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
 

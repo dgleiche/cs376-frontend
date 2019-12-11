@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!item.hidden" class="menu-wrapper">
+  <div v-if="!item.hidden && hasPermission(item)" class="menu-wrapper">
     <template
       v-if="
         hasOneShowingChild(item.children, item) &&
@@ -12,10 +12,12 @@
           :index="resolvePath(onlyOneChild.path)"
           :class="{ 'submenu-title-noDropdown': !isNest }"
         >
-          <item
-            :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
-            :title="onlyOneChild.meta.title"
+          <font-awesome-icon
+            v-if="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
+            :icon="onlyOneChild.meta.icon || item.meta.icon"
+            class="svg-icon"
           />
+          <span slot="title">{{ onlyOneChild.meta.title }}</span>
         </el-menu-item>
       </app-link>
     </template>
@@ -27,11 +29,12 @@
       popper-append-to-body
     >
       <template slot="title">
-        <item
-          v-if="item.meta"
-          :icon="item.meta && item.meta.icon"
-          :title="item.meta.title"
+        <font-awesome-icon
+          v-if="item.meta && item.meta.icon"
+          :icon="item.meta.icon"
+          class="svg-icon"
         />
+        <span slot="title">{{ item.meta.title }}</span>
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -48,13 +51,13 @@
 <script>
 import path from 'path'
 import { isExternal } from '@/utils/validate'
-import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'SidebarItem',
-  components: { Item, AppLink },
+  components: { AppLink },
   mixins: [FixiOSBug],
   props: {
     // route object
@@ -77,7 +80,13 @@ export default {
     this.onlyOneChild = null
     return {}
   },
+  computed: {
+    ...mapGetters(['user'])
+  },
   methods: {
+    hasPermission(route) {
+      return !(route.access && route.access !== this.user.email)
+    },
     hasOneShowingChild(children = [], parent) {
       const showingChildren = children.filter((item) => {
         if (item.hidden) {

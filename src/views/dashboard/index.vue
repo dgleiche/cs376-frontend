@@ -32,6 +32,7 @@ export default {
       .dispatch('twitter/getTweets')
       .then(() => {
         this.loading = false
+        console.log(`loaded ${this.tweetData.length} tweets`)
       })
       .catch((error) => {
         this.loading = false
