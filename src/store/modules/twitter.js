@@ -75,11 +75,8 @@ const actions = {
                   const tweetData = tweetRes.data()
                   const tweetsForPage = Object.keys(tweetData).map((key) => {
                     const data = tweetData[key]
-                    return {
-                      id: data.id,
-                      text: data.text,
-                      score: data.score.compound
-                    }
+                    console.log('Avail. Data:', data)
+                    return data
                   })
                   resolve(tweetsForPage)
                 })

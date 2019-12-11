@@ -8,6 +8,7 @@
     </div>
 
     <h2>Tweets</h2>
+    <p><b>Number of tweets:</b> {{ tweetData[handle].length }}</p>
     <el-table
       v-loading="loadingTweets"
       :data="tweetData[handle]"
@@ -16,7 +17,11 @@
     >
       <el-table-column prop="id" label="ID" width="200"></el-table-column>
       <el-table-column prop="text" label="Text"></el-table-column>
-      <el-table-column prop="score" label="Score" width="100"></el-table-column>
+      <el-table-column
+        prop="score.compound"
+        label="Score"
+        width="100"
+      ></el-table-column>
     </el-table>
   </div>
 </template>
@@ -46,6 +51,7 @@ export default {
   },
   methods: {
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript
+    // Calculate the color at a position on a gradient
     scaledColor(c1, c2, w1) {
       const w2 = 1 - w1
       // Calculated colors in [r, g, b]
@@ -57,16 +63,16 @@ export default {
     },
     tweetRowStyle({ row }) {
       let rgb = [0, 0, 0]
-      if (row.score < 0) {
+      if (row.score.compound < 0) {
         // We are on a scale of blue to red
         const c1 = [255, 0, 0]
         const c2 = [0, 0, 255]
-        rgb = this.scaledColor(c1, c2, row.score * -1)
+        rgb = this.scaledColor(c1, c2, row.score.compound * -1)
       } else {
         // We are on a scale of blue to green
         const c1 = [0, 255, 0]
         const c2 = [0, 0, 255]
-        rgb = this.scaledColor(c1, c2, row.score)
+        rgb = this.scaledColor(c1, c2, row.score.compound)
       }
 
       return {
