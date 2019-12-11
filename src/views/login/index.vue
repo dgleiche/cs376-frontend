@@ -90,6 +90,18 @@ export default {
   },
   methods: {
     handleLogin() {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+          console.log('result:', result)
+        })
+        .catch((error) => {
+          console.error('Error signing in with firebase')
+          console.error(`[${error.code}]: ${error.message}`)
+        })
+
       // this.loading = true
       // this.$store
       //   .dispatch('user/login', this.loginForm)
