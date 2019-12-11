@@ -21,20 +21,43 @@ const actions = {
         .doc('tweets')
         .get()
         .then((res) => {
-          const tweetData = res.data()
-          const tweetArray = Object.keys(tweetData).map((key) => {
-            const data = tweetData[key]
-            return {
-              id: data.id,
-              text: data.text,
-              score: data.score.compound
-            }
+          let tweetArray = []
+          let fetchPromises = []
+
+          const pages = res.data().pages
+          pages.forEach((page) => {
+            const pagePromise = new Promise((resolve, reject) =>
+              res.ref
+                .collection(page)
+                .doc('data')
+                .get()
+                .then((tweetRes) => {
+                  const tweetData = tweetRes.data()
+                  const tweetsForPage = Object.keys(tweetData).map((key) => {
+                    const data = tweetData[key]
+                    return {
+                      id: data.id,
+                      text: data.text,
+                      score: data.score.compound
+                    }
+                  })
+                  resolve(tweetsForPage)
+                })
+                .catch((error) => reject(error))
+            )
+
+            fetchPromises.push(pagePromise)
           })
 
-          console.log('tweets', tweetArray.length)
-
-          commit(twitterMutations.SET_TWEETS, tweetArray)
-          resolve()
+          Promise.all(fetchPromises)
+            .then((pageTweets) => {
+              pageTweets.forEach((pageTweet) => {
+                tweetArray = [...tweetArray, ...pageTweet]
+              })
+              commit(twitterMutations.SET_TWEETS, tweetArray)
+              resolve()
+            })
+            .catch((error) => reject(error))
         })
         .catch((error) => reject(error))
     })
