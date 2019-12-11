@@ -57,6 +57,19 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/handles',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/handles/index'),
+        name: 'Handles',
+        meta: { title: 'Handles' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
