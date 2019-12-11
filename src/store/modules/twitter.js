@@ -31,6 +31,8 @@ const actions = {
             }
           })
 
+          console.log('tweets', tweetArray.length)
+
           commit(twitterMutations.SET_TWEETS, tweetArray)
           resolve()
         })
