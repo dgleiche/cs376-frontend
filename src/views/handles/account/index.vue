@@ -2,6 +2,10 @@
   <div class="account-container">
     <h1>Account: {{ handle }}</h1>
     <h2>Info</h2>
+    <div v-for="(value, property) in twitterHandleInfo" :key="value">
+      <b>{{ property }}:</b>
+      {{ value }}
+    </div>
 
     <h2>Tweets</h2>
     <el-table
@@ -29,7 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['tweetData'])
+    ...mapGetters(['twitterHandleInfo', 'tweetData'])
   },
   created() {
     this.loadingTweets = true
@@ -37,6 +41,8 @@ export default {
       this.loadingTweets = false
       console.log('tweets:', this.tweetData[this.handle].length)
     })
+
+    this.$store.dispatch('twitter/getInfoForHandle', this.handle)
   },
   methods: {
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript

@@ -6,5 +6,6 @@ export const userMutations = {
 
 export const twitterMutations = {
   SET_HANDLES: 'SET_HANDLES',
+  SET_HANDLE_INFO: 'SET_HANDLE_INFO',
   SET_TWEETS: 'SET_TWEETS'
 }

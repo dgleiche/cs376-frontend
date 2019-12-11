@@ -3,12 +3,16 @@ import firebase from 'firebase'
 
 const state = {
   handles: [],
+  handleInfo: {},
   tweetData: {}
 }
 
 const mutations = {
   [twitterMutations.SET_HANDLES](state, handles) {
     state.handles = handles
+  },
+  [twitterMutations.SET_HANDLE_INFO](state, info) {
+    state.handleInfo = info
   },
   [twitterMutations.SET_TWEETS](state, payload) {
     state.tweetData[payload.handle] = payload.tweetData
@@ -27,6 +31,22 @@ const actions = {
         .then((res) => {
           const handles = res.data().handles
           commit(twitterMutations.SET_HANDLES, handles)
+          resolve()
+        })
+        .catch((error) => reject(error))
+    })
+  },
+  // Retrieve the account info for a handle
+  getInfoForHandle({ commit }, handle) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection(handle)
+        .doc('info')
+        .get()
+        .then((res) => {
+          const info = res.data()
+          commit(twitterMutations.SET_HANDLE_INFO, info)
           resolve()
         })
         .catch((error) => reject(error))
