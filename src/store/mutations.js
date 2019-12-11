@@ -3,3 +3,7 @@ export const userMutations = {
   SET_NAME: 'SET_NAME',
   SET_AVATAR: 'SET_AVATAR'
 }
+
+export const twitterMutations = {
+  SET_TWEETS: 'SET_TWEETS'
+}
