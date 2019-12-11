@@ -11,7 +11,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="user.avatar" class="user-avatar" />
+          <img :src="user.avatar" class="user-avatar" :alt="user.name" />
           <i class="el-icon-arrow-down el-icon--right" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">

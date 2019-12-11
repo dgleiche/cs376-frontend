@@ -90,28 +90,21 @@ export default {
   },
   methods: {
     handleLogin() {
+      this.loading = true
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase
         .auth()
         .signInWithPopup(provider)
-        .then((result) => {
-          console.log('result:', result)
+        .then(async (result) => {
+          await this.$store.dispatch('user/setInfo', result.user)
+          await this.$router.push({ path: this.redirect || '/' })
+          this.loading = false
         })
         .catch((error) => {
+          this.loading = false
           console.error('Error signing in with firebase')
           console.error(`[${error.code}]: ${error.message}`)
         })
-
-      // this.loading = true
-      // this.$store
-      //   .dispatch('user/login', this.loginForm)
-      //   .then(() => {
-      //     this.$router.push({ path: this.redirect || '/' })
-      //     this.loading = false
-      //   })
-      //   .catch(() => {
-      //     this.loading = false
-      //   })
     }
   }
 }
