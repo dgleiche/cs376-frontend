@@ -71,6 +71,13 @@ export const constantRoutes = [
         component: () => import('@/views/handles/index'),
         name: 'Handles',
         meta: { title: 'Handles', icon: faTachometerAlt }
+      },
+      {
+        path: ':handle',
+        component: () => import('@/views/handles/account/index'),
+        name: 'HandlesAccount',
+        meta: { title: 'Account Info', noCache: true },
+        hidden: true
       }
     ]
   },

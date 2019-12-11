@@ -3,15 +3,15 @@ import firebase from 'firebase'
 
 const state = {
   handles: [],
-  tweetData: []
+  tweetData: {}
 }
 
 const mutations = {
   [twitterMutations.SET_HANDLES](state, handles) {
     state.handles = handles
   },
-  [twitterMutations.SET_TWEETS](state, tweetData) {
-    state.tweetData = tweetData
+  [twitterMutations.SET_TWEETS](state, payload) {
+    state.tweetData[payload.handle] = payload.tweetData
   }
 }
 
@@ -33,11 +33,11 @@ const actions = {
     })
   },
   // Retrieve the tweets from the firebase db
-  getTweets({ commit }) {
+  getTweetsForHandle({ commit }, handle) {
     return new Promise((resolve, reject) => {
       firebase
         .firestore()
-        .collection('elonmusk')
+        .collection(handle)
         .doc('tweets')
         .get()
         .then((res) => {
@@ -74,7 +74,10 @@ const actions = {
               pageTweets.forEach((pageTweet) => {
                 tweetArray = [...tweetArray, ...pageTweet]
               })
-              commit(twitterMutations.SET_TWEETS, tweetArray)
+              commit(twitterMutations.SET_TWEETS, {
+                handle,
+                tweetData: tweetArray
+              })
               resolve()
             })
             .catch((error) => reject(error))

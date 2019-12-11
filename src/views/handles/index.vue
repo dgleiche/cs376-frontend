@@ -3,7 +3,7 @@
     <h1>Handles</h1>
     <ul>
       <li v-for="handle in twitterHandles" :key="handle">
-        {{ handle }}
+        <router-link :to="`/handles/${handle}`">{{ handle }}</router-link>
       </li>
     </ul>
   </div>

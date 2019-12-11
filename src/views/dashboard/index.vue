@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <el-table
       v-loading="loading"
-      :data="tweetData"
+      :data="tweetData.elonmusk"
       style="width: 100%"
       :row-style="tweetRowStyle"
     >
@@ -29,10 +29,10 @@ export default {
   created() {
     this.loading = true
     this.$store
-      .dispatch('twitter/getTweets')
+      .dispatch('twitter/getTweetsForHandle', 'elonmusk')
       .then(() => {
         this.loading = false
-        console.log(`loaded ${this.tweetData.length} tweets`)
+        console.log(`loaded ${this.tweetData.elonmusk.length} tweets`)
       })
       .catch((error) => {
         this.loading = false
