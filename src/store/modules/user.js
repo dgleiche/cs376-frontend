@@ -1,5 +1,6 @@
 import { resetRouter } from '@/router'
 import { userMutations } from '@/store/mutations'
+import firebase from 'firebase'
 
 const state = {
   email: '',
@@ -39,18 +40,17 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit }) {
     return new Promise((resolve, reject) => {
-      resolve()
-      // logout(state.token)
-      //   .then(() => {
-      //     commit('SET_TOKEN', '')
-      //     resetRouter()
-      //     resolve()
-      //   })
-      //   .catch((error) => {
-      //     reject(error)
-      //   })
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          commit(userMutations.SET_EMAIL, '')
+          resetRouter()
+          resolve()
+        })
+        .catch((error) => reject(error))
     })
   }
 }
