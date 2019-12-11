@@ -13,13 +13,11 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
-  data() {
-    return {
-      tweetData: []
-    }
-  },
   computed: {
-    ...mapGetters(['user'])
+    ...mapGetters(['user', 'tweetData'])
+  },
+  created() {
+    this.$store.dispatch('twitter/getTweets')
   }
 }
 </script>

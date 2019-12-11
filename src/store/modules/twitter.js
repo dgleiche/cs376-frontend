@@ -1,4 +1,5 @@
 import { twitterMutations } from '@/store/mutations'
+import firebase from 'firebase'
 
 const state = {
   tweetData: []
@@ -14,8 +15,26 @@ const actions = {
   // Retrieve the tweets from the firebase db
   getTweets({ commit }) {
     return new Promise((resolve, reject) => {
-      commit(twitterMutations.SET_TWEETS, [])
-      resolve()
+      firebase
+        .firestore()
+        .collection('elonmusk')
+        .doc('tweets')
+        .get()
+        .then((res) => {
+          const tweetData = res.data()
+          const tweetArray = Object.keys(tweetData).map((key) => {
+            const data = tweetData[key]
+            return {
+              id: data.id,
+              text: data.text,
+              score: data.score.compound
+            }
+          })
+
+          commit(twitterMutations.SET_TWEETS, tweetArray)
+          resolve()
+        })
+        .catch((error) => reject(error))
     })
   }
 }
