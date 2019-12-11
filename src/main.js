@@ -6,6 +6,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
+import firebase from 'firebase'
+
 import '@/styles/index.scss' // global css
 
 import App from './App'
@@ -19,6 +21,19 @@ import '@/permission' // permission control
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyD7COUe9S5TGG0YnNDW37fGsf26nvVojgY',
+  authDomain: 'yalewebdev.firebaseapp.com',
+  databaseURL: 'https://yalewebdev.firebaseio.com',
+  projectId: 'yalewebdev',
+  storageBucket: 'yalewebdev.appspot.com',
+  messagingSenderId: '341428011856',
+  appId: '1:341428011856:web:f5cf32ee40a73eaad2e255',
+  measurementId: 'G-L1KT1037GQ'
+}
+
+firebase.initializeApp(firebaseConfig)
 
 new Vue({
   el: '#app',
