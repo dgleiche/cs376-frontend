@@ -41,7 +41,7 @@
           auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
-        <span class="show-pwd" @click="showPwd">
+        <span class="show-pwd">
           <svg-icon
             :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
           />
@@ -87,16 +87,6 @@ export default {
     }
   },
   methods: {
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
     handleLogin() {
       // this.loading = true
       // this.$store
