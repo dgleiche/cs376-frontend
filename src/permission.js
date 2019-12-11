@@ -20,26 +20,23 @@ router.beforeEach(async (to, from, next) => {
   // Determine if the user is logged in through firebase
   const user = await currentUser()
 
-  // determine whether the user has logged in
-  const hasUser = false
-  if (hasUser) {
+  if (user) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasUserInfo = store.getters.name
+      const hasUserInfo = store.getters.email
       if (hasUserInfo) {
         next()
       } else {
         try {
           // Save the user info
-          await store.dispatch('user/getInfo')
-
+          await store.dispatch('user/setInfo', user)
           next()
         } catch (error) {
           // remove token and go to login page to re-login
-          await store.dispatch('user/resetToken')
+          await store.dispatch('user/clearEmail')
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
