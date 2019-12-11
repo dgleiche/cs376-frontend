@@ -1,15 +1,12 @@
-import Cookies from 'js-cookie'
+import firebase from 'firebase'
 
-const TokenKey = '376_token'
-
-export function getToken() {
-  return Cookies.get(TokenKey)
-}
-
-export function setToken(token) {
-  return Cookies.set(TokenKey, token)
-}
-
-export function removeToken() {
-  return Cookies.remove(TokenKey)
+export function currentUser() {
+  return new Promise((resolve, reject) => {
+    firebase.auth().onAuthStateChanged(
+      (user) => {
+        resolve(user)
+      },
+      (error) => reject(error)
+    )
+  })
 }
