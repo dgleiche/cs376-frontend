@@ -1,6 +1,6 @@
 <template>
   <div class="account-container">
-    <h1>Account: {{ handle }}</h1>
+    <h1>Account: @{{ handle }}</h1>
     <h2>Info</h2>
     <div v-for="(value, property) in twitterHandleInfo" :key="value">
       <b>{{ property }}:</b>
