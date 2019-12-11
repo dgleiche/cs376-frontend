@@ -1,9 +1,18 @@
 <template>
   <div class="handles-container">
     <!-- Form for requesting new handles -->
-    <el-form ref="request-handle-form" :model="handleForm" :inline="true">
+    <el-form
+      ref="request-handle-form"
+      :model="handleForm"
+      :inline="true"
+      @submit.prevent="handleNewAccount"
+    >
       <el-form-item label="Parse New Handle:">
-        <el-input v-model="handleForm.handle" placeholder="@elonmusk..." />
+        <el-input
+          v-model="handleForm.handle"
+          placeholder="elonmusk..."
+          @keydown.enter.prevent="handleNewAccount"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="handleNewAccount">
