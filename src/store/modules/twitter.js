@@ -2,16 +2,36 @@ import { twitterMutations } from '@/store/mutations'
 import firebase from 'firebase'
 
 const state = {
+  handles: [],
   tweetData: []
 }
 
 const mutations = {
+  [twitterMutations.SET_HANDLES](state, handles) {
+    state.handles = handles
+  },
   [twitterMutations.SET_TWEETS](state, tweetData) {
     state.tweetData = tweetData
   }
 }
 
 const actions = {
+  // Retrieve all of the twitter handles currently in the db
+  getHandles({ commit }) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('listOfHandles')
+        .doc('handles')
+        .get()
+        .then((res) => {
+          const handles = res.data().handles
+          commit(twitterMutations.SET_HANDLES, handles)
+          resolve()
+        })
+        .catch((error) => reject(error))
+    })
+  },
   // Retrieve the tweets from the firebase db
   getTweets({ commit }) {
     return new Promise((resolve, reject) => {
