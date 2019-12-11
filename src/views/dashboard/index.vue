@@ -1,6 +1,11 @@
 <template>
   <div class="dashboard-container">
-    <el-table :data="tweetData" style="width: 100%" :row-style="tweetRowStyle">
+    <el-table
+      v-loading="loading"
+      :data="tweetData"
+      style="width: 100%"
+      :row-style="tweetRowStyle"
+    >
       <el-table-column prop="id" label="ID" width="200"></el-table-column>
       <el-table-column prop="text" label="Text"></el-table-column>
       <el-table-column prop="score" label="Score" width="100"></el-table-column>
@@ -13,11 +18,25 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+  data() {
+    return {
+      loading: false
+    }
+  },
   computed: {
     ...mapGetters(['user', 'tweetData'])
   },
   created() {
-    this.$store.dispatch('twitter/getTweets')
+    this.loading = true
+    this.$store
+      .dispatch('twitter/getTweets')
+      .then(() => {
+        this.loading = false
+      })
+      .catch((error) => {
+        this.loading = false
+        console.log('Error fetching tweets:', error.message)
+      })
   },
   methods: {
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript
