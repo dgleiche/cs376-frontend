@@ -2,8 +2,8 @@ import { login, logout, getInfo } from '@/api/user'
 import { resetRouter } from '@/router'
 
 const state = {
-  token: '',
   name: '',
+  email: '',
   avatar: ''
 }
 
