@@ -24,7 +24,7 @@ const actions = {
   setInfo({ commit }, user) {
     return new Promise((resolve) => {
       commit(userMutations.SET_EMAIL, user.email)
-      commit(userMutations.SET_NAME, user.name)
+      commit(userMutations.SET_NAME, user.displayName)
       commit(userMutations.SET_AVATAR, user.photoURL)
       resolve()
     })
