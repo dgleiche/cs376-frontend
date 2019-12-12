@@ -11,13 +11,25 @@
 
     <h2>Processed Data</h2>
     <template v-if="tweetData[handle] && twitterHandleProcessedData">
-      <!--      <h3>Top Five Most Responded To Graph</h3>-->
-      <!--      <div-->
-      <!--        v-html="-->
-      <!--          twitterHandleProcessedData.graphs-->
-      <!--            .top_five_most_popular_responded_to_graph.graph-->
-      <!--        "-->
-      <!--      ></div>-->
+      <h3>Graphs</h3>
+
+      <toggleable-graph
+        graph-title="Top Five Most Popular Responded To"
+        :graph-html="
+          twitterHandleProcessedData.graphs
+            .top_five_most_popular_responded_to_graph.graph
+        "
+      >
+      </toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Top Five Responded To"
+        :graph-html="
+          twitterHandleProcessedData.graphs.top_five_responded_to_graph.graph
+        "
+      >
+      </toggleable-graph>
+
       <h3>Histograms</h3>
 
       <toggleable-graph
@@ -34,6 +46,21 @@
         :graph-html="
           twitterHandleProcessedData.histograms.likes_for_retweets_histogram
             .graph
+        "
+      ></toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes with Images"
+        :graph-html="
+          twitterHandleProcessedData.histograms.likes_with_images_histogram
+            .graph
+        "
+      ></toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes"
+        :graph-html="
+          twitterHandleProcessedData.histograms.likes_histogram.graph
         "
       ></toggleable-graph>
     </template>
