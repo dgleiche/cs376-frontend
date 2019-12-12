@@ -39,6 +39,6 @@ export default {
   margin: 30px;
 }
 .graphCanvas {
-  height: 1000px;
+  height: 1500px;
 }
 </style>

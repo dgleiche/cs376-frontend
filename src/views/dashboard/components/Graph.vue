@@ -54,7 +54,7 @@ export default {
         force: 900,
         nodeSize: 20,
         size: {
-          h: 800
+          h: 1000
         },
         nodeLabels: true,
         linkWidth: 5,
@@ -78,7 +78,7 @@ export default {
 <style lang="scss" scoped>
 .graph {
   width: 100%;
-  height: 100%;
+  height: 1500px;
 }
 .canvas-dev {
   width: 100%;
