@@ -56,9 +56,11 @@ const actions = {
         .then((res) => {
           const info = res.data()
 
-          info['Been on twitter since'] = moment
-            .unix(info['Been on twitter since'].seconds)
-            .format('MMMM Do YYYY')
+          if (info && info['Been on twitter since']) {
+            info['Been on twitter since'] = moment
+              .unix(info['Been on twitter since'].seconds)
+              .format('MMMM Do YYYY')
+          }
           commit(twitterMutations.SET_HANDLE_INFO, info)
           resolve()
         })
