@@ -18,32 +18,24 @@
       <!--            .top_five_most_popular_responded_to_graph.graph-->
       <!--        "-->
       <!--      ></div>-->
+      <h3>Histograms</h3>
 
-      <h3
-        class="graph-header"
-        @click="
-          shownGraphs.histograms.likesForOriginal = !shownGraphs.histograms
-            .likesForOriginal
-        "
-      >
-        Likes For Original Histogram
-        <span class="show-graph-button">
-          <template v-if="shownGraphs.histograms.likesForOriginal">
-            &or;
-          </template>
-          <template v-else>
-            >
-          </template>
-        </span>
-      </h3>
-      <span
-        ref="histogramGraph"
-        v-show="shownGraphs.histograms.likesForOriginal"
-        v-html="
+      <toggleable-graph
+        graph-title="Likes for Original"
+        :graph-html="
           twitterHandleProcessedData.histograms.likes_for_original_histogram
             .graph
         "
-      />
+      >
+      </toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes for Retweets"
+        :graph-html="
+          twitterHandleProcessedData.histograms.likes_for_retweets_histogram
+            .graph
+        "
+      ></toggleable-graph>
     </template>
 
     <h2>Tweets</h2>
@@ -75,9 +67,13 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import ToggleableGraph from '@/views/handles/account/components/ToggleableGraph'
 
 export default {
   name: 'HandlesAccount',
+  components: {
+    ToggleableGraph
+  },
   data() {
     return {
       handle: this.$route.params.handle,
@@ -87,7 +83,10 @@ export default {
       tweetTablePageSize: 10,
       shownGraphs: {
         histograms: {
-          likesForOriginal: false
+          likesForOriginal: false,
+          likesForRetweet: false,
+          likes: false,
+          likesWithImages: false
         }
       }
     }
@@ -116,7 +115,12 @@ export default {
         .then(() => {
           console.log('processed data:', this.twitterHandleProcessedData)
           this.$nextTick().then(() => {
-            this.executeGraphScript(this.$refs.histogramGraph)
+            // const graphRefs = [
+            //   this.$refs.likesForOriginalHistogram,
+            //   this.$refs.likesForRetweetHistogram
+            // ]
+            //
+            // graphRefs.forEach((ref) => this.executeGraphScript(ref))
           })
         })
     })
@@ -124,15 +128,6 @@ export default {
     this.$store.dispatch('twitter/getInfoForHandle', this.handle)
   },
   methods: {
-    // Execute script parts of dynamically loaded js (for graphs)
-    executeGraphScript(ref) {
-      ref.childNodes.forEach((node) => {
-        if (node.nodeName === 'SCRIPT') {
-          const script = node.outerText
-          eval(script)
-        }
-      })
-    },
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript
     // Calculate the color at a position on a gradient
     scaledColor(c1, c2, w1) {
@@ -169,14 +164,5 @@ export default {
 <style lang="scss" scoped>
 .account-container {
   margin: 30px;
-
-  .graph-header {
-    cursor: pointer;
-  }
-
-  .show-graph-button {
-    color: blue;
-    padding: 5px;
-  }
 }
 </style>
