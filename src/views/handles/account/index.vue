@@ -2,16 +2,26 @@
   <div class="account-container">
     <h1>Account: @{{ handle }}</h1>
     <h2>Info</h2>
-    <div v-for="(value, property) in twitterHandleInfo" :key="value">
-      <b>{{ property }}:</b>
-      {{ value }}
-    </div>
+    <template v-if="tweetData[handle]">
+      <div v-for="(value, property) in twitterHandleInfo" :key="property">
+        <b>{{ property }}:</b>
+        {{ value }}
+      </div>
+    </template>
 
     <h2>Tweets</h2>
-    <p><b>Number of tweets:</b> {{ tweetData[handle].length }}</p>
+    <div v-if="tweetData[handle]" class="pagination-block">
+      <el-pagination
+        :current-page.sync="tweetTablePage"
+        :page-sizes="tweetTablePageSizes"
+        :page-size.sync="tweetTablePageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tweetData[handle].length"
+      />
+    </div>
     <el-table
       v-loading="loadingTweets"
-      :data="tweetData[handle]"
+      :data="tweetsForCurrentPage"
       style="width: 100%"
       :row-style="tweetRowStyle"
     >
@@ -34,17 +44,26 @@ export default {
   data() {
     return {
       handle: this.$route.params.handle,
-      loadingTweets: false
+      loadingTweets: false,
+      tweetTablePage: 1,
+      tweetTablePageSizes: [10, 30, 50, 100, 200],
+      tweetTablePageSize: 10
     }
   },
   computed: {
-    ...mapGetters(['twitterHandleInfo', 'tweetData'])
+    ...mapGetters(['twitterHandleInfo', 'tweetData']),
+    tweetsForCurrentPage() {
+      // Subtract one from the current table page to account for zero/one index difference
+      const startIndex = this.tweetTablePageSize * (this.tweetTablePage - 1)
+      const endIndex = startIndex + this.tweetTablePageSize
+      return this.tweetData[this.handle].slice(startIndex, endIndex)
+    }
   },
   created() {
+    // this.tweetData[this.handle] = []
     this.loadingTweets = true
     this.$store.dispatch('twitter/getTweetsForHandle', this.handle).then(() => {
       this.loadingTweets = false
-      console.log('tweets:', this.tweetData[this.handle].length)
     })
 
     this.$store.dispatch('twitter/getInfoForHandle', this.handle)
