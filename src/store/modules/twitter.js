@@ -4,6 +4,7 @@ import firebase from 'firebase'
 const state = {
   handles: [],
   handleInfo: {},
+  processedData: {},
   tweetData: {}
 }
 
@@ -13,6 +14,9 @@ const mutations = {
   },
   [twitterMutations.SET_HANDLE_INFO](state, info) {
     state.handleInfo = info
+  },
+  [twitterMutations.SET_PROCESSED_DATA](state, payload) {
+    state.processedData[payload.handle] = payload.data
   },
   [twitterMutations.SET_TWEETS](state, payload) {
     state.tweetData[payload.handle] = payload.tweetData
@@ -52,6 +56,25 @@ const actions = {
         .catch((error) => reject(error))
     })
   },
+  // Retrieve the charts and other data under processed
+  getProcessedDataForHandle({ commit }, handle) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection(handle)
+        .doc('processed')
+        .get()
+        .then((res) => {
+          const processedData = res.data()
+          commit(twitterMutations.SET_PROCESSED_DATA, {
+            handle,
+            data: processedData
+          })
+          resolve()
+        })
+        .catch((error) => reject(error))
+    })
+  },
   // Retrieve the tweets from the firebase db
   getTweetsForHandle({ commit }, handle) {
     return new Promise((resolve, reject) => {
@@ -74,8 +97,7 @@ const actions = {
                 .then((tweetRes) => {
                   const tweetData = tweetRes.data()
                   const tweetsForPage = Object.keys(tweetData).map((key) => {
-                    const data = tweetData[key]
-                    return data
+                    return tweetData[key]
                   })
                   resolve(tweetsForPage)
                 })

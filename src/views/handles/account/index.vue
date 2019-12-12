@@ -2,21 +2,70 @@
   <div class="account-container">
     <h1>Account: @{{ handle }}</h1>
     <h2>Info</h2>
-    <template v-if="tweetData[handle]">
+    <template v-if="tweets && twitterHandleInfo">
       <div v-for="(value, property) in twitterHandleInfo" :key="property">
         <b>{{ property }}:</b>
         {{ value }}
       </div>
     </template>
 
+    <h2>Processed Data</h2>
+    <template v-if="processedData">
+      <h3>Graphs</h3>
+
+      <toggleable-graph
+        graph-title="Top Five Most Popular Responded To"
+        :graph-html="
+          processedData.graphs.top_five_most_popular_responded_to_graph.graph
+        "
+      >
+      </toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Top Five Responded To"
+        :graph-html="processedData.graphs.top_five_responded_to_graph.graph"
+      >
+      </toggleable-graph>
+
+      <h3>Histograms</h3>
+
+      <toggleable-graph
+        graph-title="Likes for Original"
+        :graph-html="
+          processedData.histograms.likes_for_original_histogram.graph
+        "
+      >
+      </toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes for Retweets"
+        :graph-html="
+          processedData.histograms.likes_for_retweets_histogram.graph
+        "
+      ></toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes with Images"
+        :graph-html="processedData.histograms.likes_with_images_histogram.graph"
+      ></toggleable-graph>
+
+      <toggleable-graph
+        graph-title="Likes"
+        :graph-html="processedData.histograms.likes_histogram.graph"
+      ></toggleable-graph>
+    </template>
+    <template v-else>
+      Processing...
+    </template>
+
     <h2>Tweets</h2>
-    <div v-if="tweetData[handle]" class="pagination-block">
+    <div v-if="tweets" class="pagination-block">
       <el-pagination
         :current-page.sync="tweetTablePage"
         :page-sizes="tweetTablePageSizes"
         :page-size.sync="tweetTablePageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="tweetData[handle].length"
+        :total="tweets.length"
       />
     </div>
     <el-table
@@ -38,33 +87,57 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import ToggleableGraph from '@/views/handles/account/components/ToggleableGraph'
 
 export default {
   name: 'HandlesAccount',
+  components: {
+    ToggleableGraph
+  },
   data() {
     return {
       handle: this.$route.params.handle,
       loadingTweets: false,
       tweetTablePage: 1,
       tweetTablePageSizes: [10, 30, 50, 100, 200],
-      tweetTablePageSize: 10
+      tweetTablePageSize: 10,
+      processedData: {},
+      tweets: []
     }
   },
   computed: {
-    ...mapGetters(['twitterHandleInfo', 'tweetData']),
+    ...mapGetters([
+      'twitterHandleInfo',
+      'twitterHandleProcessedData',
+      'tweetData'
+    ]),
     tweetsForCurrentPage() {
+      if (this.tweets.length === 0) {
+        return []
+      }
+
       // Subtract one from the current table page to account for zero/one index difference
       const startIndex = this.tweetTablePageSize * (this.tweetTablePage - 1)
       const endIndex = startIndex + this.tweetTablePageSize
-      return this.tweetData[this.handle].slice(startIndex, endIndex)
+      return this.tweets.slice(startIndex, endIndex)
     }
   },
   created() {
     // this.tweetData[this.handle] = []
     this.loadingTweets = true
-    this.$store.dispatch('twitter/getTweetsForHandle', this.handle).then(() => {
-      this.loadingTweets = false
-    })
+    this.$store
+      .dispatch('twitter/getTweetsForHandle', this.handle)
+      .then(() => {
+        this.loadingTweets = false
+        this.tweets = this.tweetData[this.handle]
+
+        this.$store
+          .dispatch('twitter/getProcessedDataForHandle', this.handle)
+          .then(() => {
+            this.processedData = this.twitterHandleProcessedData[this.handle]
+          })
+      })
+      .catch((error) => console.log('error:', error))
 
     this.$store.dispatch('twitter/getInfoForHandle', this.handle)
   },

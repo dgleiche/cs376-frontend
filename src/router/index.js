@@ -65,9 +65,12 @@ export const constantRoutes = [
   {
     path: '/handles',
     component: Layout,
+    redirect: '/handles/list',
+    name: 'Handles',
+    meta: { title: 'Handles' },
     children: [
       {
-        path: 'index',
+        path: 'list',
         component: () => import('@/views/handles/index'),
         name: 'Handles',
         meta: { title: 'Handles', icon: faTachometerAlt }
