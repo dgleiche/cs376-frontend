@@ -11,6 +11,8 @@
         </template>
       </span>
     </h4>
+
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <span v-show="show" ref="graph" v-html="graphHtml" />
   </div>
 </template>
@@ -48,7 +50,6 @@ export default {
       ref.childNodes.forEach((node) => {
         if (node.nodeName === 'SCRIPT') {
           const script = node.outerText
-          console.log('script:', script)
           eval(script)
         }
       })

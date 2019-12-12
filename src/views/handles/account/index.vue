@@ -2,7 +2,7 @@
   <div class="account-container">
     <h1>Account: @{{ handle }}</h1>
     <h2>Info</h2>
-    <template v-if="tweetData[handle] && twitterHandleInfo">
+    <template v-if="tweets && twitterHandleInfo">
       <div v-for="(value, property) in twitterHandleInfo" :key="property">
         <b>{{ property }}:</b>
         {{ value }}
@@ -59,13 +59,13 @@
     </template>
 
     <h2>Tweets</h2>
-    <div v-if="tweetData[handle]" class="pagination-block">
+    <div v-if="tweets" class="pagination-block">
       <el-pagination
         :current-page.sync="tweetTablePage"
         :page-sizes="tweetTablePageSizes"
         :page-size.sync="tweetTablePageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="tweetData[handle].length"
+        :total="tweets.length"
       />
     </div>
     <el-table
@@ -101,7 +101,8 @@ export default {
       tweetTablePage: 1,
       tweetTablePageSizes: [10, 30, 50, 100, 200],
       tweetTablePageSize: 10,
-      processedData: {}
+      processedData: {},
+      tweets: []
     }
   },
   computed: {
@@ -111,10 +112,14 @@ export default {
       'tweetData'
     ]),
     tweetsForCurrentPage() {
+      if (this.tweets.length === 0) {
+        return []
+      }
+
       // Subtract one from the current table page to account for zero/one index difference
       const startIndex = this.tweetTablePageSize * (this.tweetTablePage - 1)
       const endIndex = startIndex + this.tweetTablePageSize
-      return this.tweetData[this.handle].slice(startIndex, endIndex)
+      return this.tweets.slice(startIndex, endIndex)
     }
   },
   created() {
@@ -124,6 +129,7 @@ export default {
       .dispatch('twitter/getTweetsForHandle', this.handle)
       .then(() => {
         this.loadingTweets = false
+        this.tweets = this.tweetData[this.handle]
 
         this.$store
           .dispatch('twitter/getProcessedDataForHandle', this.handle)
