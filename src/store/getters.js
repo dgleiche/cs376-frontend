@@ -5,6 +5,7 @@ const getters = {
   twitterHandles: (state) => state.twitter.handles,
   twitterHandleInfo: (state) => state.twitter.handleInfo,
   twitterHandleProcessedData: (state) => state.twitter.processedData,
-  tweetData: (state) => state.twitter.tweetData
+  tweetData: (state) => state.twitter.tweetData,
+  networkGraphData: (state) => state.twitter.networkGraphData
 }
 export default getters

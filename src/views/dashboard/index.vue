@@ -1,17 +1,6 @@
 <!-- NOTE: THIS IS HARDCODED RIGHT NOW FOR ELON MUSK -->
 <template>
-  <div class="dashboard-container">
-    <el-table
-      v-loading="loading"
-      :data="tweetData.elonmusk"
-      style="width: 100%"
-      :row-style="tweetRowStyle"
-    >
-      <el-table-column prop="id" label="ID" width="200"></el-table-column>
-      <el-table-column prop="text" label="Text"></el-table-column>
-      <el-table-column prop="score" label="Score" width="100"></el-table-column>
-    </el-table>
-  </div>
+  <div class="dashboard-container"></div>
 </template>
 
 <script>
@@ -25,20 +14,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'tweetData'])
+    ...mapGetters(['user', 'tweetData', 'networkGraphData'])
   },
   created() {
     this.loading = true
-    this.$store
-      .dispatch('twitter/getTweetsForHandle', 'elonmusk')
-      .then(() => {
-        this.loading = false
-        console.log(`loaded ${this.tweetData.elonmusk.length} tweets`)
-      })
-      .catch((error) => {
-        this.loading = false
-        console.log('Error fetching tweets:', error.message)
-      })
+
+    this.$store.dispatch('twitter/getNetworkGraphData').then(() => {
+      console.log('net graph data:', this.networkGraphData)
+    })
   },
   methods: {
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript

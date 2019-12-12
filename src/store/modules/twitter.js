@@ -5,7 +5,8 @@ const state = {
   handles: [],
   handleInfo: {},
   processedData: {},
-  tweetData: {}
+  tweetData: {},
+  networkGraphData: {}
 }
 
 const mutations = {
@@ -20,6 +21,9 @@ const mutations = {
   },
   [twitterMutations.SET_TWEETS](state, payload) {
     state.tweetData[payload.handle] = payload.tweetData
+  },
+  [twitterMutations.GET_NETWORK_GRAPH](state, graphData) {
+    state.networkGraphData = graphData
   }
 }
 
@@ -119,6 +123,21 @@ const actions = {
               resolve()
             })
             .catch((error) => reject(error))
+        })
+        .catch((error) => reject(error))
+    })
+  },
+  getNetworkGraphData({ commit }) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('TwitterNetworkGraph')
+        .doc('graph')
+        .get()
+        .then((res) => {
+          const networkGraphData = res.data()
+          commit(twitterMutations.GET_NETWORK_GRAPH, networkGraphData)
+          resolve()
         })
         .catch((error) => reject(error))
     })
