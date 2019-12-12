@@ -19,9 +19,26 @@
       <!--        "-->
       <!--      ></div>-->
 
-      <h3>Likes For Original Histogram</h3>
+      <h3
+        class="graph-header"
+        @click="
+          shownGraphs.histograms.likesForOriginal = !shownGraphs.histograms
+            .likesForOriginal
+        "
+      >
+        Likes For Original Histogram
+        <span class="show-graph-button">
+          <template v-if="shownGraphs.histograms.likesForOriginal">
+            &or;
+          </template>
+          <template v-else>
+            >
+          </template>
+        </span>
+      </h3>
       <span
         ref="histogramGraph"
+        v-show="shownGraphs.histograms.likesForOriginal"
         v-html="
           twitterHandleProcessedData.histograms.likes_for_original_histogram
             .graph
@@ -67,7 +84,12 @@ export default {
       loadingTweets: false,
       tweetTablePage: 1,
       tweetTablePageSizes: [10, 30, 50, 100, 200],
-      tweetTablePageSize: 10
+      tweetTablePageSize: 10,
+      shownGraphs: {
+        histograms: {
+          likesForOriginal: false
+        }
+      }
     }
   },
   computed: {
@@ -147,5 +169,14 @@ export default {
 <style lang="scss" scoped>
 .account-container {
   margin: 30px;
+
+  .graph-header {
+    cursor: pointer;
+  }
+
+  .show-graph-button {
+    color: blue;
+    padding: 5px;
+  }
 }
 </style>
