@@ -2,7 +2,7 @@
 <template>
   <div class="dashboard-container">
     <template v-if="graphData">
-      <graph :nodes="graphData.nodes" :edges="graphData.edges"></graph>
+      <graph :nodes="graphData.nodes" :links="graphData.edges"></graph>
     </template>
     <template v-else>
       Loading graph...
