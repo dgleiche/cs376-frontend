@@ -12,30 +12,50 @@
     <h2>Processed Data</h2>
     <template v-if="processedData">
       <h3>Graphs</h3>
+      <div class="chart-wrapper">
+        <el-row :gutter="32">
+          <el-col :xs="24" :sm="24" :lg="12">
+            <div class="chart-wrapper">
+              <h3>Top Five Users Responded To</h3>
+              <bar-chart :chart-data="topFive" />
+            </div>
+          </el-col>
+          <el-col :xs="24" :sm="24" :lg="12">
+            <div>
+              <h3>Top Five Most Popular Users Responded To</h3>
+              <bar-chart :chart-data="topFivePopular" />
+            </div>
+          </el-col>
+        </el-row>
+        <div>
+          <h3>Overall Sentement of Tweets</h3>
+          <pie-chart :chart-data="pieChartData" />
+        </div>
+      </div>
 
-      <toggleable-graph
-        graph-title="Top Five Most Popular Responded To"
-        :graph-html="
-          processedData.graphs.top_five_most_popular_responded_to_graph.graph
-        "
-      >
-      </toggleable-graph>
+      <!--      <toggleable-graph-->
+      <!--        graph-title="Top Five Most Popular Responded To"-->
+      <!--        :graph-html="-->
+      <!--          processedData.graphs.top_five_most_popular_responded_to_graph.graph-->
+      <!--        "-->
+      <!--      >-->
+      <!--      </toggleable-graph>-->
 
-      <toggleable-graph
-        graph-title="Top Five Responded To"
-        :graph-html="processedData.graphs.top_five_responded_to_graph.graph"
-      >
-      </toggleable-graph>
+      <!--      <toggleable-graph-->
+      <!--        graph-title="Top Five Responded To"-->
+      <!--        :graph-html="processedData.graphs.top_five_responded_to_graph.graph"-->
+      <!--      >-->
+      <!--      </toggleable-graph>-->
 
       <h3>Histograms</h3>
 
-      <toggleable-graph
-        graph-title="Likes for Original"
-        :graph-html="
-          processedData.histograms.likes_for_original_histogram.graph
-        "
-      >
-      </toggleable-graph>
+      <!--      <toggleable-graph-->
+      <!--        graph-title="Likes for Original"-->
+      <!--        :graph-html="-->
+      <!--          processedData.histograms.likes_for_original_histogram.graph-->
+      <!--        "-->
+      <!--      >-->
+      <!--      </toggleable-graph>-->
 
       <toggleable-graph
         graph-title="Likes for Retweets"
@@ -88,11 +108,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import ToggleableGraph from '@/views/handles/account/components/ToggleableGraph'
+import PieChart from './components/PieChart'
+import BarChart from './components/BarChart'
 
 export default {
   name: 'HandlesAccount',
   components: {
-    ToggleableGraph
+    ToggleableGraph,
+    PieChart,
+    BarChart
   },
   data() {
     return {
@@ -102,6 +126,19 @@ export default {
       tweetTablePageSizes: [10, 30, 50, 100, 200],
       tweetTablePageSize: 10,
       processedData: {},
+      sentementData: {
+        labels: [],
+        data: []
+      },
+      topFive: {
+        labels: [],
+        data: []
+      },
+      topFivePopular: {
+        labels: [],
+        data: []
+      },
+      pieChartData: { title: 'PIE CHART', labels: [], data: [] },
       tweets: []
     }
   },
@@ -135,6 +172,40 @@ export default {
           .dispatch('twitter/getProcessedDataForHandle', this.handle)
           .then(() => {
             this.processedData = this.twitterHandleProcessedData[this.handle]
+            this.sentementData.data = [
+              this.processedData.sentiment.negativeC,
+              this.processedData.sentiment.neutralC,
+              this.processedData.sentiment.positiveC
+            ]
+            this.pieChartData.labels = ['Negative', 'Neutral', 'Positive']
+            this.pieChartData.data = [
+              {
+                value: this.processedData.sentiment.negativeC,
+                name: 'Negative'
+              },
+              {
+                value: this.processedData.sentiment.neutralC,
+                name: 'Neutral'
+              },
+              {
+                value: this.processedData.sentiment.positiveC,
+                name: 'Positive'
+              }
+            ]
+            console.log(this.processedData)
+            this.topFivePopular = {
+              labels: this.processedData.graphs
+                .top_five_most_popular_responded_to_graph.labels,
+              data: this.processedData.graphs
+                .top_five_most_popular_responded_to_graph.data
+            }
+            this.topFive = {
+              labels: this.processedData.graphs.top_five_responded_to_graph
+                .labels,
+              data: this.processedData.graphs.top_five_responded_to_graph.data
+            }
+
+            console.log(this.pieChartData)
           })
       })
       .catch((error) => console.log('error:', error))
