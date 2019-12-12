@@ -1,6 +1,7 @@
 <!-- NOTE: THIS IS HARDCODED RIGHT NOW FOR ELON MUSK -->
 <template>
   <div class="dashboard-container">
+    <graph class="graphCanvas" />
     <el-table
       v-loading="loading"
       :data="tweetData.elonmusk"
@@ -16,9 +17,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
+import Graph from '@/views/dashboard/components/Graph'
 export default {
   name: 'Dashboard',
+  components: {
+    Graph
+  },
   data() {
     return {
       loading: false
@@ -76,5 +80,8 @@ export default {
 <style lang="scss" scoped>
 .dashboard-container {
   margin: 30px;
+}
+.graphCanvas {
+  height: 1000px;
 }
 </style>
