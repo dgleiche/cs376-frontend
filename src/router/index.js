@@ -69,7 +69,7 @@ export const constantRoutes = [
         path: 'list',
         component: () => import('@/views/handles/index'),
         name: 'Handles',
-        meta: { title: 'Handles', icon: faAt }
+        meta: { title: 'List of Handles', icon: faAt }
       },
       {
         path: ':handle',
