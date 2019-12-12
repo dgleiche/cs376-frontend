@@ -1,7 +1,26 @@
 <template>
   <div id="graph">
-    <d3-network :net-nodes="nodes" :net-links="links" :options="options">
+    <d3-network
+      :net-nodes="nodes"
+      :net-links="links"
+      :options="options"
+      @node-click="clickedNode"
+    >
     </d3-network>
+
+    <el-dialog :title="popup.title" :visible.sync="popup.visible">
+      <template v-if="popup.info">
+        <div v-for="(value, property) in popup.info" :key="property">
+          <b>{{ property }}:</b>
+          {{ value }}
+          <br />
+          <br />
+        </div>
+      </template>
+      <template v-else>
+        No information has been retrieved for this account yet.
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -26,6 +45,11 @@ export default {
   },
   data() {
     return {
+      popup: {
+        visible: false,
+        title: '',
+        info: null
+      },
       options: {
         force: 900,
         nodeSize: 20,
@@ -36,6 +60,16 @@ export default {
         linkWidth: 5,
         canvas: false
       }
+    }
+  },
+  methods: {
+    clickedNode(e, node) {
+      const handle = node.name
+      this.$store.dispatch('twitter/getInfoForHandle', handle).then(() => {
+        this.popup.title = `Info for @${handle}`
+        this.popup.info = this.$store.state.twitter.handleInfo
+        this.popup.visible = true
+      })
     }
   }
 }
