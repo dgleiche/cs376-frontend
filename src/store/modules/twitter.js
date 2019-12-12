@@ -1,11 +1,13 @@
 import { twitterMutations } from '@/store/mutations'
 import firebase from 'firebase'
+import moment from 'moment'
 
 const state = {
   handles: [],
   handleInfo: {},
   processedData: {},
-  tweetData: {}
+  tweetData: {},
+  networkGraphData: {}
 }
 
 const mutations = {
@@ -20,6 +22,9 @@ const mutations = {
   },
   [twitterMutations.SET_TWEETS](state, payload) {
     state.tweetData[payload.handle] = payload.tweetData
+  },
+  [twitterMutations.GET_NETWORK_GRAPH](state, graphData) {
+    state.networkGraphData = graphData
   }
 }
 
@@ -50,6 +55,12 @@ const actions = {
         .get()
         .then((res) => {
           const info = res.data()
+
+          if (info && info['Been on twitter since']) {
+            info['Been on twitter since'] = moment
+              .unix(info['Been on twitter since'].seconds)
+              .format('MMMM Do YYYY')
+          }
           commit(twitterMutations.SET_HANDLE_INFO, info)
           resolve()
         })
@@ -119,6 +130,21 @@ const actions = {
               resolve()
             })
             .catch((error) => reject(error))
+        })
+        .catch((error) => reject(error))
+    })
+  },
+  getNetworkGraphData({ commit }) {
+    return new Promise((resolve, reject) => {
+      firebase
+        .firestore()
+        .collection('TwitterNetworkGraph')
+        .doc('graph')
+        .get()
+        .then((res) => {
+          const networkGraphData = res.data()
+          commit(twitterMutations.GET_NETWORK_GRAPH, networkGraphData)
+          resolve()
         })
         .catch((error) => reject(error))
     })

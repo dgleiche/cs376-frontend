@@ -4,10 +4,7 @@ import Router from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
 
-import {
-  faUniversity,
-  faTachometerAlt
-} from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faAt } from '@fortawesome/free-solid-svg-icons'
 
 Vue.use(Router)
 
@@ -57,7 +54,7 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: faUniversity }
+        meta: { title: 'Dashboard', icon: faChartLine }
       }
     ]
   },
@@ -66,14 +63,13 @@ export const constantRoutes = [
     path: '/handles',
     component: Layout,
     redirect: '/handles/list',
-    name: 'Handles',
     meta: { title: 'Handles' },
     children: [
       {
         path: 'list',
         component: () => import('@/views/handles/index'),
         name: 'Handles',
-        meta: { title: 'Handles', icon: faTachometerAlt }
+        meta: { title: 'List of Handles', icon: faAt }
       },
       {
         path: ':handle',
