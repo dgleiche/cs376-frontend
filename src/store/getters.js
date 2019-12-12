@@ -4,6 +4,7 @@ const getters = {
   user: (state) => state.user,
   twitterHandles: (state) => state.twitter.handles,
   twitterHandleInfo: (state) => state.twitter.handleInfo,
+  twitterHandleProcessedData: (state) => state.twitter.processedData,
   tweetData: (state) => state.twitter.tweetData
 }
 export default getters

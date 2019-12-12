@@ -2,11 +2,31 @@
   <div class="account-container">
     <h1>Account: @{{ handle }}</h1>
     <h2>Info</h2>
-    <template v-if="tweetData[handle]">
+    <template v-if="tweetData[handle] && twitterHandleInfo">
       <div v-for="(value, property) in twitterHandleInfo" :key="property">
         <b>{{ property }}:</b>
         {{ value }}
       </div>
+    </template>
+
+    <h2>Processed Data</h2>
+    <template v-if="tweetData[handle] && twitterHandleProcessedData">
+      <!--      <h3>Top Five Most Responded To Graph</h3>-->
+      <!--      <div-->
+      <!--        v-html="-->
+      <!--          twitterHandleProcessedData.graphs-->
+      <!--            .top_five_most_popular_responded_to_graph.graph-->
+      <!--        "-->
+      <!--      ></div>-->
+
+      <h3>Likes For Original Histogram</h3>
+      <span
+        ref="histogramGraph"
+        v-html="
+          twitterHandleProcessedData.histograms.likes_for_original_histogram
+            .graph
+        "
+      />
     </template>
 
     <h2>Tweets</h2>
@@ -51,7 +71,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['twitterHandleInfo', 'tweetData']),
+    ...mapGetters([
+      'twitterHandleInfo',
+      'twitterHandleProcessedData',
+      'tweetData'
+    ]),
     tweetsForCurrentPage() {
       // Subtract one from the current table page to account for zero/one index difference
       const startIndex = this.tweetTablePageSize * (this.tweetTablePage - 1)
@@ -64,11 +88,29 @@ export default {
     this.loadingTweets = true
     this.$store.dispatch('twitter/getTweetsForHandle', this.handle).then(() => {
       this.loadingTweets = false
+
+      this.$store
+        .dispatch('twitter/getProcessedDataForHandle', this.handle)
+        .then(() => {
+          console.log('processed data:', this.twitterHandleProcessedData)
+          this.$nextTick().then(() => {
+            this.executeGraphScript(this.$refs.histogramGraph)
+          })
+        })
     })
 
     this.$store.dispatch('twitter/getInfoForHandle', this.handle)
   },
   methods: {
+    // Execute script parts of dynamically loaded js (for graphs)
+    executeGraphScript(ref) {
+      ref.childNodes.forEach((node) => {
+        if (node.nodeName === 'SCRIPT') {
+          const script = node.outerText
+          eval(script)
+        }
+      })
+    },
     // https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript
     // Calculate the color at a position on a gradient
     scaledColor(c1, c2, w1) {
