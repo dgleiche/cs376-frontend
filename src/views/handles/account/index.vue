@@ -10,23 +10,20 @@
     </template>
 
     <h2>Processed Data</h2>
-    <template v-if="tweetData[handle] && twitterHandleProcessedData">
+    <template v-if="processedData">
       <h3>Graphs</h3>
 
       <toggleable-graph
         graph-title="Top Five Most Popular Responded To"
         :graph-html="
-          twitterHandleProcessedData.graphs
-            .top_five_most_popular_responded_to_graph.graph
+          processedData.graphs.top_five_most_popular_responded_to_graph.graph
         "
       >
       </toggleable-graph>
 
       <toggleable-graph
         graph-title="Top Five Responded To"
-        :graph-html="
-          twitterHandleProcessedData.graphs.top_five_responded_to_graph.graph
-        "
+        :graph-html="processedData.graphs.top_five_responded_to_graph.graph"
       >
       </toggleable-graph>
 
@@ -35,8 +32,7 @@
       <toggleable-graph
         graph-title="Likes for Original"
         :graph-html="
-          twitterHandleProcessedData.histograms.likes_for_original_histogram
-            .graph
+          processedData.histograms.likes_for_original_histogram.graph
         "
       >
       </toggleable-graph>
@@ -44,25 +40,22 @@
       <toggleable-graph
         graph-title="Likes for Retweets"
         :graph-html="
-          twitterHandleProcessedData.histograms.likes_for_retweets_histogram
-            .graph
+          processedData.histograms.likes_for_retweets_histogram.graph
         "
       ></toggleable-graph>
 
       <toggleable-graph
         graph-title="Likes with Images"
-        :graph-html="
-          twitterHandleProcessedData.histograms.likes_with_images_histogram
-            .graph
-        "
+        :graph-html="processedData.histograms.likes_with_images_histogram.graph"
       ></toggleable-graph>
 
       <toggleable-graph
         graph-title="Likes"
-        :graph-html="
-          twitterHandleProcessedData.histograms.likes_histogram.graph
-        "
+        :graph-html="processedData.histograms.likes_histogram.graph"
       ></toggleable-graph>
+    </template>
+    <template v-else>
+      Processing...
     </template>
 
     <h2>Tweets</h2>
@@ -108,14 +101,7 @@ export default {
       tweetTablePage: 1,
       tweetTablePageSizes: [10, 30, 50, 100, 200],
       tweetTablePageSize: 10,
-      shownGraphs: {
-        histograms: {
-          likesForOriginal: false,
-          likesForRetweet: false,
-          likes: false,
-          likesWithImages: false
-        }
-      }
+      processedData: {}
     }
   },
   computed: {
@@ -134,23 +120,18 @@ export default {
   created() {
     // this.tweetData[this.handle] = []
     this.loadingTweets = true
-    this.$store.dispatch('twitter/getTweetsForHandle', this.handle).then(() => {
-      this.loadingTweets = false
+    this.$store
+      .dispatch('twitter/getTweetsForHandle', this.handle)
+      .then(() => {
+        this.loadingTweets = false
 
-      this.$store
-        .dispatch('twitter/getProcessedDataForHandle', this.handle)
-        .then(() => {
-          console.log('processed data:', this.twitterHandleProcessedData)
-          this.$nextTick().then(() => {
-            // const graphRefs = [
-            //   this.$refs.likesForOriginalHistogram,
-            //   this.$refs.likesForRetweetHistogram
-            // ]
-            //
-            // graphRefs.forEach((ref) => this.executeGraphScript(ref))
+        this.$store
+          .dispatch('twitter/getProcessedDataForHandle', this.handle)
+          .then(() => {
+            this.processedData = this.twitterHandleProcessedData[this.handle]
           })
-        })
-    })
+      })
+      .catch((error) => console.log('error:', error))
 
     this.$store.dispatch('twitter/getInfoForHandle', this.handle)
   },

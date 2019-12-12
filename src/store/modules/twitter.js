@@ -15,8 +15,8 @@ const mutations = {
   [twitterMutations.SET_HANDLE_INFO](state, info) {
     state.handleInfo = info
   },
-  [twitterMutations.SET_PROCESSED_DATA](state, data) {
-    state.processedData = data
+  [twitterMutations.SET_PROCESSED_DATA](state, payload) {
+    state.processedData[payload.handle] = payload.data
   },
   [twitterMutations.SET_TWEETS](state, payload) {
     state.tweetData[payload.handle] = payload.tweetData
@@ -66,7 +66,10 @@ const actions = {
         .get()
         .then((res) => {
           const processedData = res.data()
-          commit(twitterMutations.SET_PROCESSED_DATA, processedData)
+          commit(twitterMutations.SET_PROCESSED_DATA, {
+            handle,
+            data: processedData
+          })
           resolve()
         })
         .catch((error) => reject(error))
@@ -94,8 +97,7 @@ const actions = {
                 .then((tweetRes) => {
                   const tweetData = tweetRes.data()
                   const tweetsForPage = Object.keys(tweetData).map((key) => {
-                    const data = tweetData[key]
-                    return data
+                    return tweetData[key]
                   })
                   resolve(tweetsForPage)
                 })

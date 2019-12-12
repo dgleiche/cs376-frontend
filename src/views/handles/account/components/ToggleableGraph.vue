@@ -48,6 +48,7 @@ export default {
       ref.childNodes.forEach((node) => {
         if (node.nodeName === 'SCRIPT') {
           const script = node.outerText
+          console.log('script:', script)
           eval(script)
         }
       })
