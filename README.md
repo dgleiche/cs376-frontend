@@ -3,6 +3,7 @@
 > Features google login, core UI data visualizations, and more. By Neal Soni and Dylan Gleicher
 
 ### GITHUB REPOS:
+
 Front End: https://github.com/dgleiche/cs376-frontend
 
 Server & Scraper: https://github.com/Nealsoni00/cs376-server
@@ -58,4 +59,3 @@ Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/gui
 ## License
 
 [MIT](https://github.com/PanJiaChen/vue-admin-template/blob/master/LICENSE) license.
-
